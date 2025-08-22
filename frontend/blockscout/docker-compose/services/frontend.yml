@@ -10,5 +10,3 @@ services:
     container_name: 'frontend'
     env_file:
       -  ../envs/common-frontend.env
-    environment:
-      NODE_RPC_URL: http://host.docker.internal:63893

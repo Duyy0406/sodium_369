@@ -61,6 +61,8 @@ curl -L https://releases.kurtosis.com/install.sh | bash
 source ~/.bashrc
 
 # Start local blockchain network with Kurtosis
+# Run docker
+cd go-ethereum
 kurtosis run github.com/ethpandaops/ethereum-package --args-file ./network_params.yaml --image-download always --enclave sodium-testnet
 
 # Verify the network is running
@@ -75,6 +77,10 @@ cd smart_contract
 
 # Install dependencies
 npm install
+
+# Configure (edit .env file)
+cp .env.example .env
+# Edit .env to update RPC_URL
 
 # Deploy the Registry contract (uses the "kurtosis" network config)
 npx hardhat run scripts/deploy-kurtosis.js --network kurtosis
@@ -120,7 +126,7 @@ python3 agent.py
 
 ```bash
 # Navigate to the blockscout directory
-cd ../frontend/blockscout
+cd ../frontend/blockscout/docker-compose
 
 # Configure environment variables
 cp docker-compose/envs/common-frontend.env.example docker-compose/envs/common-frontend.env
