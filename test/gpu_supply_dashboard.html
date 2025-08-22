@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GPU Supply Dashboard</title>
+    <!-- Tailwind CSS CDN for easy styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f0f4f8; /* Light blue-gray background */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+        .container {
+            background-color: #ffffff;
+            padding: 2.5rem;
+            border-radius: 1.5rem; /* More rounded corners */
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            max-width: 500px;
+            width: 100%;
+            border: 1px solid #e2e8f0; /* Subtle border */
+        }
+        h1 {
+            color: #2d3748; /* Darker text for heading */
+            font-size: 2.5rem; /* Larger heading */
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+        }
+        #gpuSupplyDisplay {
+            font-size: 3.5rem; /* Very large number */
+            font-weight: 800;
+            color: #4c51bf; /* Deep purple color */
+            margin-top: 1rem;
+            display: block; /* Ensures it takes full width */
+            transition: color 0.3s ease-in-out; /* Smooth color transition on update */
+        }
+        .loading-text {
+            font-size: 1.25rem;
+            color: #718096;
+        }
+        .error-message {
+            color: #e53e3e; /* Red for errors */
+            font-weight: 600;
+            margin-top: 1rem;
+        }
+        .footer-text {
+            font-size: 0.875rem;
+            color: #a0aec0;
+            margin-top: 2rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Total GPU Supply</h1>
+        <span id="gpuSupplyDisplay" class="loading-text">Loading...</span>
+        <p id="errorMessage" class="error-message hidden"></p>
+        <p class="footer-text">Updates every 5 seconds.</p>
+    </div>
+
+    <!-- Ethers.js library for blockchain interaction -->
+    <script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.umd.min.js"></script>
+
+    <script>
+        // --- Configuration ---
+        // Your deployed smart contract address
+        const CONTRACT_ADDRESS = "0x4bF8D2E79E33cfd5a8348737CA91bE5F65Ea7dd9";
+
+        // Your smart contract ABI (Application Binary Interface)
+        const CONTRACT_ABI = [
+            {
+                "inputs": [
+                    {
+                        "internalType": "address",
+                        "name": "_oracleAddress",
+                        "type": "address"
+                    }
+                ],
+                "stateMutability": "nonpayable",
+                "type": "constructor"
+            },
+            {
+                "anonymous": false,
+                "inputs": [
+                    {
+                        "indexed": false,
+                        "internalType": "uint256",
+                        "name": "oldSupply",
+                        "type": "uint256"
+                    },
+                    {
+                        "indexed": false,
+                        "internalType": "uint256",
+                        "name": "newSupply",
+                        "type": "uint256"
+                    },
+                    {
+                        "indexed": true,
+                        "internalType": "address",
+                        "name": "updater",
+                        "type": "address"
+                    }
+                ],
+                "name": "GpuSupplyUpdated",
+                "type": "event"
+            },
+            {
+                "anonymous": false,
+                "inputs": [
+                    {
+                        "indexed": true,
+                        "internalType": "address",
+                        "name": "oldOracle",
+                        "type": "address"
+                    },
+                    {
+                        "indexed": true,
+                        "internalType": "address",
+                        "name": "newOracle",
+                        "type": "address"
+                    }
+                ],
+                "name": "OracleTransferred",
+                "type": "event"
+            },
+            {
+                "inputs": [],
+                "name": "oracleAddress",
+                "outputs": [
+                    {
+                        "internalType": "address",
+                        "name": "",
+                        "type": "address"
+                    }
+                ],
+                "stateMutability": "view",
+                "type": "function"
+            },
+            {
+                "inputs": [],
+                "name": "totalGpuSupply",
+                "outputs": [
+                    {
+                        "internalType": "uint256",
+                        "name": "",
+                        "type": "uint256"
+                    }
+                ],
+                "stateMutability": "view",
+                "type": "function"
+            },
+            {
+                "inputs": [
+                    {
+                        "internalType": "address",
+                        "name": "_newOracleAddress",
+                        "type": "address"
+                    }
+                ],
+                "name": "transferOracleRole",
+                "outputs": [],
+                "stateMutability": "nonpayable",
+                "type": "function"
+            },
+            {
+                "inputs": [
+                    {
+                        "internalType": "uint256",
+                        "name": "_newSupply",
+                        "type": "uint256"
+                    }
+                ],
+                "name": "updateGpuSupply",
+                "outputs": [],
+                "stateMutability": "nonpayable",
+                "type": "function"
+            }
+        ];
+
+        // The URL of your Kurtosis network's RPC endpoint
+        // This is a common default for local development networks
+        const RPC_URL = "http://localhost:49599"; // Adjust if your Kurtosis RPC endpoint is different
+
+        // How often to refresh the data (in milliseconds)
+        const REFRESH_INTERVAL = 5000; // 5 seconds
+
+        // --- DOM Elements ---
+        const gpuSupplyDisplay = document.getElementById("gpuSupplyDisplay");
+        const errorMessage = document.getElementById("errorMessage");
+
+        // --- Ethers.js Setup ---
+        let provider;
+        let contract;
+
+        /**
+         * Initializes the Ethers.js provider and contract instance.
+         */
+        async function initializeEthers() {
+            try {
+                // Connect to the local blockchain provider
+                provider = new ethers.providers.JsonRpcProvider(RPC_URL);
+
+                // Create a contract instance using the address and ABI
+                contract = new ethers.Contract(CONTRACT_ADDRESS, CONTRACT_ABI, provider);
+
+                console.log("Ethers.js initialized successfully.");
+                return true;
+            } catch (error) {
+                console.error("Error initializing Ethers.js:", error);
+                showError("Failed to connect to the blockchain. Please ensure your Kurtosis network is running and reachable at " + RPC_URL + ". Error: " + error.message);
+                return false;
+            }
+        }
+
+        /**
+         * Fetches the total GPU supply from the smart contract and updates the display.
+         */
+        async function fetchGpuSupply() {
+            if (!contract) {
+                console.warn("Contract not initialized yet. Retrying initialization...");
+                const initialized = await initializeEthers();
+                if (!initialized) return; // If initialization failed, stop here
+            }
+
+            try {
+                // Call the totalGpuSupply view function
+                const supply = await contract.totalGpuSupply();
+
+                // Convert BigNumber to a readable string
+                const formattedSupply = supply.toString();
+
+                gpuSupplyDisplay.textContent = formattedSupply;
+                gpuSupplyDisplay.classList.remove("loading-text");
+                gpuSupplyDisplay.style.color = '#4c51bf'; // Ensure color is set after loading
+                hideError();
+                console.log("Fetched GPU Supply:", formattedSupply);
+            } catch (error) {
+                console.error("Error fetching GPU supply:", error);
+                showError("Failed to fetch GPU supply. Check your network connection and contract deployment. Error: " + error.message);
+                gpuSupplyDisplay.textContent = "Error"; // Display error on the dashboard
+                gpuSupplyDisplay.style.color = '#e53e3e'; // Red for error state
+            }
+        }
+
+        /**
+         * Displays an error message on the page.
+         * @param {string} message - The error message to display.
+         */
+        function showError(message) {
+            errorMessage.textContent = message;
+            errorMessage.classList.remove("hidden");
+            gpuSupplyDisplay.textContent = "N/A"; // Indicate no data
+            gpuSupplyDisplay.classList.add("loading-text"); // Use loading style for error state
+            gpuSupplyDisplay.style.color = '#e53e3e'; // Red for error
+        }
+
+        /**
+         * Hides any displayed error message.
+         */
+        function hideError() {
+            errorMessage.textContent = "";
+            errorMessage.classList.add("hidden");
+        }
+
+        // --- Main Execution ---
+        window.onload = async function() {
+            const initialized = await initializeEthers();
+            if (initialized) {
+                // Fetch immediately on load
+                await fetchGpuSupply();
+                // Set up interval for real-time updates
+                setInterval(fetchGpuSupply, REFRESH_INTERVAL);
+            }
+        };
+
+        // Optional: Listen for GpuSupplyUpdated event for even faster updates
+        // This requires a WebSocketProvider or a more advanced setup for real-time event listening
+        // For simplicity, we are relying on polling (setInterval) for now.
+        // If you want to implement event listening, you'd do something like:
+        /*
+        window.onload = async function() {
+            const initialized = await initializeEthers();
+            if (initialized) {
+                await fetchGpuSupply(); // Initial fetch
+                // Listen for the event
+                contract.on("GpuSupplyUpdated", (oldSupply, newSupply, updater, event) => {
+                    console.log("GpuSupplyUpdated event received:", newSupply.toString());
+                    gpuSupplyDisplay.textContent = newSupply.toString();
+                    gpuSupplyDisplay.classList.remove("loading-text");
+                    gpuSupplyDisplay.style.color = '#4c51bf';
+                    hideError();
+                });
+                // Fallback polling in case event listening fails or for initial load
+                setInterval(fetchGpuSupply, REFRESH_INTERVAL);
+            }
+        };
+        */
+    </script>
+</body>
+</html>

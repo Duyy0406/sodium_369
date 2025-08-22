@@ -1,0 +1,176 @@
+<%# lib/block_scout_web/templates/gpu_supply/index.html.eex %>
+<%# Main GPU Supply Dashboard Template %>
+
+<title>GPU Supply Dashboard</title>
+
+<link rel="stylesheet" href="<%= static_path(@conn, "/css/gpu_dashboard.css") %>">
+
+
+<div class="gpu-dashboard-container">
+  <div class="dashboard-header">
+    <div class="container">
+      <div class="row">
+        <div class="col-12">
+          <div class="header-content">
+            <h1 class="dashboard-title">
+              <i class="fas fa-microchip"></i>
+              GPU Supply Monitor
+            </h1>
+            <p class="dashboard-subtitle">
+              Real-time GPU availability on <%= network_display_name(@config) %>
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <%= if show_config_warnings?(@config) do %>
+    <div class="container mt-3">
+      <div class="alert alert-warning alert-dismissible fade show" role="alert">
+        <h5 class="alert-heading">
+          <i class="fas fa-exclamation-triangle"></i>
+          Configuration Issues
+        </h5>
+        <ul class="mb-0">
+          <%= for warning <- config_warnings(@config) do %>
+            <li><%= warning %></li>
+          <% end %>
+        </ul>
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+      </div>
+    </div>
+  <% end %>
+
+  <div class="container mt-4">
+    <div class="row">
+      <div class="col-lg-8 col-md-7 mb-4">
+        <div class="card gpu-supply-card">
+          <div class="card-header">
+            <h3 class="card-title mb-0">
+              <i class="fas fa-server"></i>
+              Total GPU Supply
+            </h3>
+          </div>
+          <div class="card-body text-center">
+            <div id="loading-spinner" class="spinner-container" style="display: none;">
+              <div class="spinner-border text-primary" role="status">
+                <span class="visually-hidden">Loading...</span>
+              </div>
+              <p class="mt-2">Fetching GPU data...</p>
+            </div>
+            <div class="gpu-supply-display">
+              <div class="supply-value-container">
+                <span id="gpu-supply-value" class="<%= gpu_value_class(@initial_data && @initial_data[:total_gpu_supply]) %>">
+                  <%= if has_initial_data?(@initial_data) do %>
+                    <%= format_gpu_count(@initial_data[:total_gpu_supply]) %>
+                  <% else %>
+                    Loading...
+                  <% end %>
+                </span>
+                <div class="supply-label">GPUs Available</div>
+              </div>
+            </div>
+            <div id="error-message" class="alert alert-danger mt-3" style="display: none;" role="alert">
+              <i class="fas fa-exclamation-circle"></i>
+              <span id="error-text">Connection error</span>
+            </div>
+            <div class="dashboard-controls mt-4">
+              <button id="refresh-btn" class="btn btn-primary me-2">
+                <i class="fas fa-sync-alt"></i>
+                Refresh Now
+              </button>
+              <button id="toggle-auto-refresh" class="btn btn-outline-secondary">
+                <i class="fas fa-play"></i>
+                Auto-refresh: ON
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-lg-4 col-md-5 mb-4">
+        <div class="card status-card mb-3">
+          <div class="card-header">
+            <h5 class="card-title mb-0">
+              <i class="fas fa-wifi"></i>
+              Connection Status
+            </h5>
+          </div>
+          <div class="card-body">
+            <div class="status-indicator-row">
+              <div class="status-indicator">
+                <span id="status-dot" class="status-dot <%= status_class(@config) %>"></span>
+                <span id="status-text"><%= status_text(@config) %></span>
+              </div>
+            </div>
+            <div class="status-details mt-3">
+              <small class="text-muted">
+                <strong>Last Update:</strong><br>
+                <span id="last-update">
+                  <%= if has_initial_data?(@initial_data) do %>
+                    <%= format_timestamp(@initial_data[:last_updated]) %>
+                  <% else %>
+                    Never
+                  <% end %>
+                </span>
+              </small>
+            </div>
+          </div>
+        </div>
+
+        <div class="card info-card mb-3">
+          <div class="card-header">
+            <h5 class="card-title mb-0">
+              <i class="fas fa-network-wired"></i>
+              Network Info
+            </h5>
+          </div>
+          <div class="card-body">
+            <div class="info-row">
+              <span class="info-label">Network:</span>
+              <span class="info-value"><%= network_display_name(@config) %></span>
+            </div>
+
+            <div class="info-row">
+              <span class="info-label">Contract:</span>
+              <span class="info-value">
+                <%= if @config[:contract_address] do %>
+                  <a href="<%= contract_explorer_link(@config) %>" target="_blank" class="contract-link">
+                    <span id="contract-address"><%= format_contract_address(@config[:contract_address]) %></span>
+                    <i class="fas fa-external-link-alt ms-1"></i>
+                  </a>
+                <% else %>
+                  <span class="text-muted">Not configured</span>
+                <% end %>
+              </span>
+            </div>
+
+            <div class="info-row">
+              <span class="info-label">Block:</span>
+              <span id="block-number" class="info-value">
+                <%= if has_initial_data?(@initial_data) do %>
+                  <%= format_block_number(@initial_data[:block_number]) %>
+                <% else %>
+                  <span class="text-muted">Loading...</span>
+                <% end %>
+              </span>
+            </div>
+
+            <div class="info-row">
+              <span class="info-label">Refresh:</span>
+              <span class="info-value"><%= refresh_interval_seconds(@config) %>s</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script type="text/javascript">
+  window.gpuDashboardConfig = <%= dashboard_config_json(@config) %>;
+  window.gpuInitialData = <%= initial_data_json(@initial_data) %>;
+</script>
+
+<script type="text/javascript" src="<%= static_path(@conn, "/js/pages/gpu_supply.js") %>"></script>

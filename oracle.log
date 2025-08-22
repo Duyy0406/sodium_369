@@ -1,0 +1,4 @@
+2025-08-01 08:11:16,421 - src.oracle_client - INFO - Connected to blockchain: reth/v1.4.8-127595e/aarch64-unknown-linux-gnu
+2025-08-01 08:11:16,422 - src.oracle_client - INFO - Account address: 0xc303588aC52785914787dBC11bABD8EBdbd4C174
+2025-08-01 08:11:16,709 - src.oracle_client - INFO - Account balance: 0.19185547997075929 ETH
+2025-08-01 08:11:18,621 - src.oracle_client - INFO - Current supply on contract: 45
