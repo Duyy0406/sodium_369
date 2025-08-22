@@ -71,7 +71,7 @@ kurtosis enclave inspect sodium-testnet
 
 ```bash
 # Navigate to contracts directory
-cd contracts
+cd smart_contract
 
 # Install dependencies
 npm install
@@ -86,7 +86,7 @@ npx hardhat run scripts/deploy-kurtosis.js --network kurtosis
 
 ```bash
 # Navigate to the oracle directory
-cd ../oracle
+cd ../oracle_service
 
 # Install Python dependencies
 pip install -r requirements.txt
@@ -164,24 +164,6 @@ cd oracle
 # Run in development mode
 python3 -m src.main --dev
 ```
-
-### Smart Contract Interaction
-
-```bash
-# Query current GPU supply
-npx hardhat run scripts/query-supply.js --network kurtosis
-
-# Manually update supply (Oracle address only)
-npx hardhat run scripts/update-supply.js --network kurtosis --value 1000
-```
-
-## 📝 Technical Documentation
-
--   [Architecture Design](docs/architecture.md)
--   [Smart Contract Documentation](docs/smart-contracts.md)
--   [Oracle Service API](docs/oracle-api.md)
--   [Agent Development Guide](docs/agent-dev.md)
--   [Block Explorer Customization](docs/explorer-customization.md)
 
 ## 🗺️ Roadmap
 
