@@ -21,7 +21,7 @@ const homePageStats: Array<HomeStatsWidgetId> = (() => {
       return [ 'latest_batch', 'average_block_time', 'total_txs', 'wallet_addresses', 'gas_tracker' ];
     }
 
-    return [ 'total_blocks', 'average_block_time', 'total_txs', 'wallet_addresses', 'gas_tracker' ];
+    return [ 'total_blocks', 'average_block_time', 'total_txs', 'wallet_addresses', 'gas_tracker', 'gpu_supply' ];
   }
 
   return parsedValue.filter((item) => HOME_STATS_WIDGET_IDS.includes(item));

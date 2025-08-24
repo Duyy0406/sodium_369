@@ -81,6 +81,7 @@
 	| "gear"
 	| "globe-b"
 	| "globe"
+	| "gpu_supply"
 	| "heart_filled"
 	| "heart_outline"
 	| "hourglass_slim"

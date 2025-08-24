@@ -16,6 +16,7 @@
     "incremental": true,
     "baseUrl": ".",
     "types": ["node", "jest"],
+    "typeRoots": ["./node_modules/@types"],
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.node.ts", "**/*.tsx", "**/*.pw.tsx", "decs.d.ts", "global.d.ts"],
   "exclude": ["node_modules", "node_modules_linux", "./deploy/tools/envs-validator", "./deploy/tools/favicon-generator", "./deploy/tools/multichain-config-generator", "./toolkit/package"],

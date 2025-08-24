@@ -21,6 +21,8 @@ const isStatsFeatureEnabled = config.features.stats.isEnabled;
 
 const Stats = () => {
   const [ hasGasTracker, setHasGasTracker ] = React.useState(config.features.gasTracker.isEnabled);
+  const [ gpuSupply, setGpuSupply ] = React.useState<string | null>(null);
+  const [ gpuSupplyLoading, setGpuSupplyLoading ] = React.useState(true);
 
   // data from stats microservice is prioritized over data from stats api
   const statsQuery = useApiQuery('stats:pages_main', {
@@ -37,6 +39,33 @@ const Stats = () => {
       placeholderData: HOMEPAGE_STATS,
     },
   });
+
+  // Fetch GPU supply data
+  React.useEffect(() => {
+    const fetchGpuSupply = async () => {
+      try {
+        setGpuSupplyLoading(true);
+        const origin = typeof window !== 'undefined' ? window.location.origin : '';
+        const res = await fetch(`${origin}/api/gpu_supply`);
+        const data = await res.json() as { ok: boolean; supply?: string; error?: string };
+        
+        if (res.ok && data.ok && data.supply) {
+          setGpuSupply(data.supply);
+        } else {
+          setGpuSupply('N/A');
+        }
+      } catch (error) {
+        console.error('Failed to fetch GPU supply:', error);
+        setGpuSupply('N/A');
+      } finally {
+        setGpuSupplyLoading(false);
+      }
+    };
+
+    fetchGpuSupply();
+    const interval = setInterval(fetchGpuSupply, 30000); // Refresh every 30 seconds
+    return () => clearInterval(interval);
+  }, []);
 
   const isPlaceholderData = statsQuery.isPlaceholderData || apiQuery.isPlaceholderData;
 
@@ -205,6 +234,13 @@ const Stats = () => {
         value: `#${ apiData.celo.epoch_number }`,
         href: { pathname: '/epochs/[number]' as const, query: { number: String(apiData.celo.epoch_number) } },
         isLoading,
+      },
+      config.UI.homepage.stats.includes('gpu_supply') && {
+        id: 'gpu_supply' as const,
+        icon: 'gpu_supply' as const,
+        label: 'GPU Supply',
+        value: gpuSupply || 'N/A',
+        isLoading: gpuSupplyLoading,
       },
     ]
       .filter(Boolean)
