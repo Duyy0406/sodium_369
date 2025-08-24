@@ -1,13 +1,13 @@
-import type { AlertDescriptionProps } from '@chakra-ui/react';
-import { Alert as ChakraAlert, Icon } from '@chakra-ui/react';
-import * as React from 'react';
+import type { AlertDescriptionProps } from "@chakra-ui/react";
+import { Alert as ChakraAlert, Icon } from "@chakra-ui/react";
+import * as React from "react";
 
-import IndicatorIcon from 'icons/info_filled.svg';
+import IconSvg from "ui/shared/IconSvg";
 
-import { CloseButton } from './close-button';
-import { Skeleton } from './skeleton';
+import { CloseButton } from "./close-button";
+import { Skeleton } from "./skeleton";
 
-export interface AlertProps extends Omit<ChakraAlert.RootProps, 'title'> {
+export interface AlertProps extends Omit<ChakraAlert.RootProps, "title"> {
   startElement?: React.ReactNode;
   endElement?: React.ReactNode;
   descriptionProps?: AlertDescriptionProps;
@@ -35,9 +35,9 @@ export const Alert = React.forwardRef<HTMLDivElement, AlertProps>(
       ...rest
     } = props;
 
-    const [ isOpen, setIsOpen ] = React.useState(true);
+    const [isOpen, setIsOpen] = React.useState(true);
 
-    const defaultIcon = <Icon boxSize={ 5 }><IndicatorIcon/></Icon>;
+    const defaultIcon = <IconSvg name="info_filled" boxSize={5} />;
 
     const iconElement = (() => {
       if (startElement !== undefined) {
@@ -48,41 +48,49 @@ export const Alert = React.forwardRef<HTMLDivElement, AlertProps>(
         return null;
       }
 
-      return <ChakraAlert.Indicator>{ icon || defaultIcon }</ChakraAlert.Indicator>;
+      return (
+        <ChakraAlert.Indicator>{icon || defaultIcon}</ChakraAlert.Indicator>
+      );
     })();
 
     const handleClose = React.useCallback(() => {
       setIsOpen(false);
       onClose?.();
-    }, [ onClose ]);
+    }, [onClose]);
 
     if (closable && !isOpen) {
       return null;
     }
 
     return (
-      <Skeleton loading={ loading } asChild>
-        <ChakraAlert.Root ref={ ref } { ...rest }>
-          { iconElement }
-          { children ? (
+      <Skeleton loading={loading} asChild>
+        <ChakraAlert.Root ref={ref} {...rest}>
+          {iconElement}
+          {children ? (
             <ChakraAlert.Content>
-              { title && <ChakraAlert.Title>{ title }</ChakraAlert.Title> }
-              <ChakraAlert.Description display="inline-flex" flexWrap="wrap" { ...descriptionProps }>{ children }</ChakraAlert.Description>
+              {title && <ChakraAlert.Title>{title}</ChakraAlert.Title>}
+              <ChakraAlert.Description
+                display="inline-flex"
+                flexWrap="wrap"
+                {...descriptionProps}
+              >
+                {children}
+              </ChakraAlert.Description>
             </ChakraAlert.Content>
           ) : (
-            <ChakraAlert.Title flex="1">{ title }</ChakraAlert.Title>
-          ) }
-          { endElement }
-          { closable && (
+            <ChakraAlert.Title flex="1">{title}</ChakraAlert.Title>
+          )}
+          {endElement}
+          {closable && (
             <CloseButton
               pos="relative"
-              m={ 0.5 }
+              m={0.5}
               alignSelf="flex-start"
-              onClick={ handleClose }
+              onClick={handleClose}
             />
-          ) }
+          )}
         </ChakraAlert.Root>
       </Skeleton>
     );
-  },
+  }
 );

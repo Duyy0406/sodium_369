@@ -21,45 +21,6 @@ const isStatsFeatureEnabled = config.features.stats.isEnabled;
 
 const Stats = () => {
   const [ hasGasTracker, setHasGasTracker ] = React.useState(config.features.gasTracker.isEnabled);
-  
-  // Add GPU Supply state
-  const [gpuSupply, setGpuSupply] = React.useState<string | null>(null);
-  const [gpuSupplyLoading, setGpuSupplyLoading] = React.useState(true);
-
-  // GPU Supply API response type
-  type ApiResponse = 
-    | { ok: true; supply: string; raw: string }
-    | { ok: false; error: string };
-
-  // Add GPU Supply polling effect
-  React.useEffect(() => {
-    const fetchGpuSupply = async () => {
-      try {
-        const origin = typeof window !== 'undefined' ? window.location.origin : '';
-        const res = await fetch(`${origin}/api/gpu-supply`);
-        const body = await res.json() as ApiResponse;
-        
-        if (!res.ok || !body.ok) {
-          throw new Error(body.ok === false ? body.error : `HTTP ${res.status}`);
-        }
-        
-        setGpuSupply(body.supply);
-      } catch (e: any) {
-        console.error('GPU supply fetch failed:', e);
-        setGpuSupply('N/A');
-      } finally {
-        setGpuSupplyLoading(false);
-      }
-    };
-
-    // Fetch immediately
-    fetchGpuSupply();
-
-    // Set up polling every 5 seconds
-    const interval = setInterval(fetchGpuSupply, 5000);
-
-    return () => clearInterval(interval);
-  }, []);
 
   // data from stats microservice is prioritized over data from stats api
   const statsQuery = useApiQuery('stats:pages_main', {
@@ -149,8 +110,8 @@ const Stats = () => {
           boxSize={ 5 }
           flexShrink={ 0 }
           cursor="pointer"
-          color="icon.info"
-          _hover={{ color: 'link.primary.hove' }}
+          color="icon.secondary"
+          _hover={{ color: 'hover' }}
         />
       </GasInfoTooltip>
     ) : null;
@@ -221,14 +182,6 @@ const Stats = () => {
         label: statsData?.total_addresses?.title || 'Wallet addresses',
         value: Number(statsData?.total_addresses?.value || apiData?.total_addresses).toLocaleString(),
         isLoading,
-      },
-      // ADD GPU SUPPLY STAT HERE
-      gpuSupply !== null && {
-        id: 'gpu_supply' as const,
-        icon: 'gpu_supply' as const, // Use 'server' or any appropriate icon name from your icon set
-        label: 'Total GPU Supply',
-        value: gpuSupply === 'N/A' ? 'N/A' : gpuSupply,
-        isLoading: gpuSupplyLoading,
       },
       hasGasTracker && apiData?.gas_prices && {
         id: 'gas_tracker' as const,

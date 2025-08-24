@@ -1,10 +1,10 @@
-import { Table as ChakraTable, Icon } from '@chakra-ui/react';
-import { throttle } from 'es-toolkit';
-import * as React from 'react';
+import { Table as ChakraTable, Icon } from "@chakra-ui/react";
+import { throttle } from "es-toolkit";
+import * as React from "react";
 
-import ArrowIcon from 'icons/arrows/east.svg';
+import IconSvg from "ui/shared/IconSvg";
 
-import { Link } from './link';
+import { Link } from "./link";
 
 export const TableRoot = ChakraTable.Root;
 export const TableBody = ChakraTable.Body;
@@ -18,7 +18,9 @@ export interface TableCellProps extends ChakraTable.CellProps {
 export const TableCell = (props: TableCellProps) => {
   const { isNumeric, ...rest } = props;
 
-  return <ChakraTable.Cell textAlign={ isNumeric ? 'right' : undefined } { ...rest }/>;
+  return (
+    <ChakraTable.Cell textAlign={isNumeric ? "right" : undefined} {...rest} />
+  );
 };
 
 export interface TableColumnHeaderProps extends ChakraTable.ColumnHeaderProps {
@@ -28,44 +30,67 @@ export interface TableColumnHeaderProps extends ChakraTable.ColumnHeaderProps {
 export const TableColumnHeader = (props: TableColumnHeaderProps) => {
   const { isNumeric, ...rest } = props;
 
-  return <ChakraTable.ColumnHeader textAlign={ isNumeric ? 'right' : undefined } { ...rest }/>;
+  return (
+    <ChakraTable.ColumnHeader
+      textAlign={isNumeric ? "right" : undefined}
+      {...rest}
+    />
+  );
 };
 
-export interface TableColumnHeaderSortableProps<F extends string> extends TableColumnHeaderProps {
+export interface TableColumnHeaderSortableProps<F extends string>
+  extends TableColumnHeaderProps {
   sortField: F;
   sortValue: string;
   onSortToggle: (sortField: F) => void;
   disabled?: boolean;
-  indicatorPosition?: 'left' | 'right';
+  indicatorPosition?: "left" | "right";
   contentAfter?: React.ReactNode;
 }
 
-export const TableColumnHeaderSortable = <F extends string>(props: TableColumnHeaderSortableProps<F>) => {
-  const { sortField, sortValue, onSortToggle, children, disabled, indicatorPosition = 'left', contentAfter, ...rest } = props;
+export const TableColumnHeaderSortable = <F extends string>(
+  props: TableColumnHeaderSortableProps<F>
+) => {
+  const {
+    sortField,
+    sortValue,
+    onSortToggle,
+    children,
+    disabled,
+    indicatorPosition = "left",
+    contentAfter,
+    ...rest
+  } = props;
 
   const handleSortToggle = React.useCallback(() => {
     onSortToggle(sortField);
-  }, [ onSortToggle, sortField ]);
+  }, [onSortToggle, sortField]);
 
   return (
-    <TableColumnHeader { ...rest }>
-      <Link onClick={ disabled ? undefined : handleSortToggle } position="relative">
-        { sortValue.includes(sortField) && (
-          <Icon
-            w={ 4 }
+    <TableColumnHeader {...rest}>
+      <Link
+        onClick={disabled ? undefined : handleSortToggle}
+        position="relative"
+      >
+        {sortValue.includes(sortField) && (
+          <IconSvg
+            name="arrows/east"
+            w={4}
             h="100%"
-            transform={ sortValue.toLowerCase().includes('asc') ? 'rotate(-90deg)' : 'rotate(90deg)' }
+            transform={
+              sortValue.toLowerCase().includes("asc")
+                ? "rotate(-90deg)"
+                : "rotate(90deg)"
+            }
             position="absolute"
-            left={ indicatorPosition === 'left' ? -5 : undefined }
-            right={ indicatorPosition === 'right' ? -5 : undefined }
-            top={ 0 }
-          >
-            <ArrowIcon/>
-          </Icon>
-        ) }
-        { children }
+            left={indicatorPosition === "left" ? -5 : undefined}
+            right={indicatorPosition === "right" ? -5 : undefined}
+            top={0}
+          />
+        )}
+        {children}
       </Link>
-      { contentAfter }
+      {contentAfter}
     </TableColumnHeader>
   );
 };
@@ -78,7 +103,7 @@ export const TableHeaderSticky = (props: TableHeaderProps) => {
   const { top, children, ...rest } = props;
 
   const ref = React.useRef<HTMLTableSectionElement>(null);
-  const [ isStuck, setIsStuck ] = React.useState(false);
+  const [isStuck, setIsStuck] = React.useState(false);
 
   const handleScroll = React.useCallback(() => {
     if (Number(ref.current?.getBoundingClientRect().y) <= (top || 0)) {
@@ -86,29 +111,29 @@ export const TableHeaderSticky = (props: TableHeaderProps) => {
     } else {
       setIsStuck(false);
     }
-  }, [ top ]);
+  }, [top]);
 
   React.useEffect(() => {
     const throttledHandleScroll = throttle(handleScroll, 300);
 
-    window.addEventListener('scroll', throttledHandleScroll);
+    window.addEventListener("scroll", throttledHandleScroll);
 
     return () => {
-      window.removeEventListener('scroll', throttledHandleScroll);
+      window.removeEventListener("scroll", throttledHandleScroll);
     };
-  }, [ handleScroll ]);
+  }, [handleScroll]);
 
   return (
     <TableHeader
-      ref={ ref }
+      ref={ref}
       position="sticky"
-      top={ top ? `${ top }px` : 0 }
-      backgroundColor={{ _light: 'white', _dark: 'black' }}
-      boxShadow={ isStuck ? 'action_bar' : 'none' }
+      top={top ? `${top}px` : 0}
+      backgroundColor={{ _light: "white", _dark: "black" }}
+      boxShadow={isStuck ? "action_bar" : "none"}
       zIndex="1"
-      { ...rest }
+      {...rest}
     >
-      { children }
+      {children}
     </TableHeader>
   );
 };

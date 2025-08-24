@@ -2,14 +2,13 @@ import type { IconProps } from '@chakra-ui/react';
 import { Icon } from '@chakra-ui/react';
 import React from 'react';
 
-// eslint-disable-next-line no-restricted-imports
-import logoIcon from 'icons/networks/logo-placeholder.svg';
+import IconSvg from 'ui/shared/IconSvg';
 
 const ChartWatermarkIcon = (props: IconProps) => {
   return (
-    <Icon
+    <IconSvg
       { ...props }
-      as={ logoIcon }
+      name="networks/logo-placeholder"
       position="absolute"
       opacity={ 0.1 }
       top="50%"
@@ -17,7 +16,7 @@ const ChartWatermarkIcon = (props: IconProps) => {
       transform="translate(-50%, -50%)"
       pointerEvents="none"
       viewBox="0 0 114 20"
-      color={{ _light: 'link', _dark: 'white' }}
+      color={{ _light: 'link.primary', _dark: 'white' }}
     />
   );
 };

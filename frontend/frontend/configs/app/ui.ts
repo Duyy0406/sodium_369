@@ -18,10 +18,10 @@ const homePageStats: Array<HomeStatsWidgetId> = (() => {
     const rollupFeature = features.rollup;
 
     if (rollupFeature.isEnabled && [ 'zkEvm', 'zkSync', 'arbitrum' ].includes(rollupFeature.type)) {
-      return [ 'latest_batch', 'average_block_time', 'total_txs', 'wallet_addresses', 'gpu_supply', 'gas_tracker' ];
+      return [ 'latest_batch', 'average_block_time', 'total_txs', 'wallet_addresses', 'gas_tracker' ];
     }
 
-    return [ 'total_blocks', 'average_block_time', 'total_txs', 'wallet_addresses', 'gpu_supply', 'gas_tracker' ];
+    return [ 'total_blocks', 'average_block_time', 'total_txs', 'wallet_addresses', 'gas_tracker' ];
   }
 
   return parsedValue.filter((item) => HOME_STATS_WIDGET_IDS.includes(item));
@@ -54,9 +54,12 @@ const UI = Object.freeze({
     },
     highlightedRoutes,
     otherLinks: parseEnvJson<Array<NavItemExternal>>(getEnvValue('NEXT_PUBLIC_OTHER_LINKS')) || [],
-    featuredNetworks: getExternalAssetFilePath('NEXT_PUBLIC_FEATURED_NETWORKS'),
     layout: (getEnvValue('NEXT_PUBLIC_NAVIGATION_LAYOUT') || 'vertical') as NavigationLayout,
     promoBanner: navigationPromoBanner,
+  },
+  featuredNetworks: {
+    items: getExternalAssetFilePath('NEXT_PUBLIC_FEATURED_NETWORKS'),
+    allLink: getEnvValue('NEXT_PUBLIC_FEATURED_NETWORKS_ALL_LINK'),
   },
   footer: {
     links: getExternalAssetFilePath('NEXT_PUBLIC_FOOTER_LINKS'),
@@ -94,6 +97,7 @@ const UI = Object.freeze({
   hasContractAuditReports: getEnvValue('NEXT_PUBLIC_HAS_CONTRACT_AUDIT_REPORTS') === 'true' ? true : false,
   colorTheme: {
     'default': defaultColorTheme,
+    overrides: parseEnvJson<Record<string, unknown>>(getEnvValue('NEXT_PUBLIC_COLOR_THEME_OVERRIDES')) || {},
   },
   fonts: {
     heading: parseEnvJson<FontFamily>(getEnvValue('NEXT_PUBLIC_FONT_FAMILY_HEADING')),

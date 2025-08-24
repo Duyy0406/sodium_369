@@ -72,10 +72,6 @@ defmodule BlockScoutWeb.Router do
   scope "/api" do
     pipe_through(:rate_limit)
     forward("/", ApiRouter)
-
-    # GPU Supply API endpoints
-    get("/gpu-supply", GpuSupplyController, :api_gpu_supply)
-    get("/gpu-supply/config", GpuSupplyController, :api_config)
   end
 
   scope "/graphiql" do
@@ -108,10 +104,6 @@ defmodule BlockScoutWeb.Router do
     if @graphql_enabled do
       get("/schema.graphql", GraphQL.SchemaController, :index)
     end
-
-    # GPU Supply Dashboard Routes
-    get("/gpu-supply", GpuSupplyController, :index)
-    get("/gpu-supply/health", GpuSupplyController, :health)
   end
 
   scope "/verify_smart_contract" do

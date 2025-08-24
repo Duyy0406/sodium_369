@@ -11,12 +11,10 @@ services:
     environment:
       BACK_PROXY_PASS: ${BACK_PROXY_PASS:-http://backend:4000}
       FRONT_PROXY_PASS: ${FRONT_PROXY_PASS:-http://frontend:3000}
-      RPC_PROXY_PASS: ${RPC_PROXY_PASS:-http://host.docker.internal:64764}  # <-- your node RPC
-
     ports:
       - target: 80
         published: 80
       - target: 8080
         published: 8080
       - target: 8081
-        published: 40345
+        published: 8081

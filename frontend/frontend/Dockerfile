@@ -18,7 +18,7 @@ COPY toolkit/utils ./toolkit/utils
 COPY toolkit/components/forms/validators/url.ts ./toolkit/components/forms/validators/url.ts
 RUN apk add git
 RUN yarn --frozen-lockfile --network-timeout 100000
-RUN yarn add ethers # <--- ADD THIS LINE HERE to install ethers.js for the main app
+
 
 ### FEATURE REPORTER
 # Install dependencies

@@ -1,7 +1,7 @@
 import { Icon } from '@chakra-ui/react';
 import React from 'react';
 
-import ArrowIcon from 'icons/arrows/east.svg';
+import IconSvg from 'ui/shared/IconSvg';
 
 import type { IconButtonProps } from '../../chakra/icon-button';
 import { IconButton } from '../../chakra/icon-button';
@@ -16,15 +16,12 @@ export interface BackToButtonProps extends IconButtonProps {
 export const BackToButton = ({ href, hint, boxSize = 6, ...rest }: BackToButtonProps) => {
 
   const button = (
-    <IconButton { ...rest } boxSize={ boxSize }>
-      <Icon
+    <IconButton { ...rest } boxSize={ boxSize } variant="icon_secondary">
+      <IconSvg
+        name="arrows/east"
         transform="rotate(180deg)"
-        color="icon.backTo"
-        _hover={{ color: 'link.primary.hover' }}
         boxSize={ boxSize }
-      >
-        <ArrowIcon/>
-      </Icon>
+      />
     </IconButton>
   );
 

@@ -1,32 +1,33 @@
-import { Icon } from '@chakra-ui/react';
-import type { ChangeEvent } from 'react';
-import React, { useCallback, useState } from 'react';
+import { Icon } from "@chakra-ui/react";
+import type { ChangeEvent } from "react";
+import React, { useCallback, useState } from "react";
 
-import SearchIcon from 'icons/search.svg';
+import IconSvg from "ui/shared/IconSvg";
 
-import type { InputProps } from '../../chakra/input';
-import { Input } from '../../chakra/input';
-import { InputGroup } from '../../chakra/input-group';
-import type { SkeletonProps } from '../../chakra/skeleton';
-import { Skeleton } from '../../chakra/skeleton';
-import { ClearButton } from '../buttons/ClearButton';
+import type { InputProps } from "../../chakra/input";
+import { Input } from "../../chakra/input";
+import { InputGroup } from "../../chakra/input-group";
+import type { SkeletonProps } from "../../chakra/skeleton";
+import { Skeleton } from "../../chakra/skeleton";
+import { ClearButton } from "../buttons/ClearButton";
 
-export interface FilterInputProps extends Omit<SkeletonProps, 'onChange' | 'loading'> {
+export interface FilterInputProps
+  extends Omit<SkeletonProps, "onChange" | "loading"> {
   onChange?: (searchTerm: string) => void;
   onFocus?: (event: React.FocusEvent<HTMLInputElement>) => void;
   onBlur?: (event: React.FocusEvent<HTMLInputElement>) => void;
   loading?: boolean;
-  size?: 'sm' | 'md' | 'lg';
+  size?: "sm" | "md" | "lg";
   placeholder: string;
   initialValue?: string;
   type?: React.HTMLInputTypeAttribute;
   name?: string;
   inputProps?: InputProps;
-};
+}
 
 export const FilterInput = ({
   onChange,
-  size = 'sm',
+  size = "sm",
   placeholder,
   initialValue,
   type,
@@ -37,52 +38,55 @@ export const FilterInput = ({
   inputProps,
   ...rest
 }: FilterInputProps) => {
-  const [ filterQuery, setFilterQuery ] = useState(initialValue || '');
+  const [filterQuery, setFilterQuery] = useState(initialValue || "");
   const inputRef = React.useRef<HTMLInputElement>(null);
 
-  const handleFilterQueryChange = useCallback((event: ChangeEvent<HTMLInputElement>) => {
-    const { value } = event.target;
+  const handleFilterQueryChange = useCallback(
+    (event: ChangeEvent<HTMLInputElement>) => {
+      const { value } = event.target;
 
-    setFilterQuery(value);
-    onChange?.(value);
-  }, [ onChange ]);
+      setFilterQuery(value);
+      onChange?.(value);
+    },
+    [onChange]
+  );
 
   const handleFilterQueryClear = useCallback(() => {
-    setFilterQuery('');
-    onChange?.('');
+    setFilterQuery("");
+    onChange?.("");
     inputRef?.current?.focus();
-  }, [ onChange ]);
+  }, [onChange]);
 
-  const startElement = <Icon boxSize={ 5 }><SearchIcon/></Icon>;
-  const endElement = <ClearButton onClick={ handleFilterQueryClear } visible={ filterQuery.length > 0 }/>;
+  const startElement = <IconSvg name="search" boxSize={5} />;
+  const endElement = (
+    <ClearButton
+      onClick={handleFilterQueryClear}
+      visible={filterQuery.length > 0}
+    />
+  );
 
   return (
-    <Skeleton
-      minW="250px"
-      borderRadius="base"
-      loading={ loading }
-      { ...rest }
-    >
+    <Skeleton minW="250px" borderRadius="base" loading={loading} {...rest}>
       <InputGroup
-        startElement={ startElement }
+        startElement={startElement}
         startElementProps={{ px: 2 }}
-        endElement={ endElement }
-        endElementProps={{ w: '32px' }}
+        endElement={endElement}
+        endElementProps={{ w: "32px" }}
       >
         <Input
-          ref={ inputRef }
-          size={ size }
-          value={ filterQuery }
-          onChange={ handleFilterQueryChange }
-          onFocus={ onFocus }
-          onBlur={ onBlur }
-          placeholder={ placeholder }
+          ref={inputRef}
+          size={size}
+          value={filterQuery}
+          onChange={handleFilterQueryChange}
+          onFocus={onFocus}
+          onBlur={onBlur}
+          placeholder={placeholder}
           borderWidth="2px"
           textOverflow="ellipsis"
           whiteSpace="nowrap"
-          type={ type }
-          name={ name }
-          { ...inputProps }
+          type={type}
+          name={name}
+          {...inputProps}
         />
       </InputGroup>
     </Skeleton>

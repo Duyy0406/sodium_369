@@ -10,8 +10,6 @@ import LatestBlocks from 'ui/home/LatestBlocks';
 import Stats from 'ui/home/Stats';
 import Transactions from 'ui/home/Transactions';
 import AdBanner from 'ui/shared/ad/AdBanner';
-// Remove this import if you no longer need the separate dashboard
-// import GpuSupplyDashboard from 'ui/gpuSupplyDashboard/GpuSupplyDashboard';
 
 const rollupFeature = config.features.rollup;
 
@@ -34,11 +32,9 @@ const Home = () => {
     <Box as="main">
       <HeroBanner/>
       <Flex flexDir={{ base: 'column', lg: 'row' }} columnGap={ 2 } rowGap={ 1 } mt={ 3 } _empty={{ mt: 0 }}>
-        <Stats/> {/* GPU Supply is now integrated here */}
+        <Stats/>
         <ChainIndicators/>
       </Flex>
-      {/* Remove the separate GPU dashboard since it's now in Stats */}
-      {/* <GpuSupplyDashboard /> */}
       <AdBanner mt={ 6 } mx="auto" display={{ base: 'flex', lg: 'none' }} justifyContent="center"/>
       <Flex mt={ 8 } direction={{ base: 'column', lg: 'row' }} columnGap={ 12 } rowGap={ 6 }>
         { leftWidget }

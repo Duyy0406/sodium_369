@@ -1,15 +1,21 @@
-import { Icon } from '@chakra-ui/react';
-import React from 'react';
+import { Icon } from "@chakra-ui/react";
+import React from "react";
 
-import type { TabItem } from './types';
+import type { TabItem } from "./types";
 
-import DotsIcon from 'icons/dots.svg';
+import IconSvg from "ui/shared/IconSvg";
 
-import { IconButton } from '../../chakra/icon-button';
-import type { IconButtonProps } from '../../chakra/icon-button';
-import { PopoverBody, PopoverCloseTriggerWrapper, PopoverContent, PopoverRoot, PopoverTrigger } from '../../chakra/popover';
-import { TabsCounter, TabsTrigger } from '../../chakra/tabs';
-import { getTabValue } from './utils';
+import { IconButton } from "../../chakra/icon-button";
+import type { IconButtonProps } from "../../chakra/icon-button";
+import {
+  PopoverBody,
+  PopoverCloseTriggerWrapper,
+  PopoverContent,
+  PopoverRoot,
+  PopoverTrigger,
+} from "../../chakra/popover";
+import { TabsCounter, TabsTrigger } from "../../chakra/tabs";
+import { getTabValue } from "./utils";
 
 interface Props extends IconButtonProps {
   tabs: Array<TabItem>;
@@ -17,10 +23,12 @@ interface Props extends IconButtonProps {
   isActive: boolean;
 }
 
-const AdaptiveTabsMenu = ({ tabs, tabsCut, isActive, ...props }: Props, ref: React.Ref<HTMLButtonElement>) => {
-
+const AdaptiveTabsMenu = (
+  { tabs, tabsCut, isActive, ...props }: Props,
+  ref: React.Ref<HTMLButtonElement>
+) => {
   return (
-    <PopoverRoot positioning={{ placement: 'bottom-end' }}>
+    <PopoverRoot positioning={{ placement: "bottom-end" }}>
       <PopoverTrigger>
         <IconButton
           // we use "div" so the :last-of-type pseudo-class targets the last tab and not the menu trigger
@@ -28,45 +36,46 @@ const AdaptiveTabsMenu = ({ tabs, tabsCut, isActive, ...props }: Props, ref: Rea
           variant="plain"
           color="tabs.solid.fg"
           _hover={{
-            color: 'link.primary.hover',
+            color: "hover",
           }}
           _expanded={{
-            color: 'tabs.solid.fg.selected',
-            bg: 'tabs.solid.bg.selected',
+            color: "selected.control.text",
+            bg: "selected.control.bg",
           }}
-          ref={ ref }
-          expanded={ isActive }
+          ref={ref}
+          expanded={isActive}
           px="18px"
-          { ...props }
+          aria-label="Open tabs menu"
+          {...props}
         >
-          <Icon boxSize={ 5 }><DotsIcon/></Icon>
+          <IconSvg name="dots" boxSize={5} />
         </IconButton>
       </PopoverTrigger>
       <PopoverContent>
-        <PopoverBody display="flex" flexDir="column" rowGap={ 2 } px={ 0 }>
-          { tabs.slice(tabsCut).map((tab) => {
+        <PopoverBody display="flex" flexDir="column" rowGap={2} px={0}>
+          {tabs.slice(tabsCut).map((tab) => {
             const value = getTabValue(tab);
 
             return (
-              <PopoverCloseTriggerWrapper key={ value }>
+              <PopoverCloseTriggerWrapper key={value}>
                 <TabsTrigger
                   className="group"
-                  value={ value }
+                  value={value}
                   w="100%"
                   py="5px"
                   borderRadius="none"
                   fontWeight="normal"
-                  color="initial"
+                  color="tabs.solid.fg"
                   _hover={{
-                    bg: 'tabs.solid.bg.selected',
+                    bg: "selected.control.bg",
                   }}
                 >
-                  { typeof tab.title === 'function' ? tab.title() : tab.title }
-                  <TabsCounter count={ tab.count }/>
+                  {typeof tab.title === "function" ? tab.title() : tab.title}
+                  <TabsCounter count={tab.count} />
                 </TabsTrigger>
               </PopoverCloseTriggerWrapper>
             );
-          }) }
+          })}
         </PopoverBody>
       </PopoverContent>
     </PopoverRoot>

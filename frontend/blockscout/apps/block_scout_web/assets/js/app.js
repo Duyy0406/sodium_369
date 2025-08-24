@@ -37,10 +37,6 @@ import './lib/card_tabs'
 import './lib/ad'
 import './lib/dark_mode'
 
-import "../css/gpu_dashboard.scss"
-import "./pages/gpu_supply"
-
-
 import swal from 'sweetalert2'
 // @ts-ignore
 window.Swal = swal

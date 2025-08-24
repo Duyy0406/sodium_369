@@ -9,9 +9,7 @@ export const HOME_STATS_WIDGET_IDS = [
   'total_operational_txs',
   'latest_l1_state_batch',
   'wallet_addresses',
-  'gpu_supply',
   'gas_tracker',
-  'gpu_supply',
   'btc_locked',
   'current_epoch',
 ] as const;
@@ -30,5 +28,8 @@ export interface HeroBannerConfig {
     _default?: HeroBannerButtonState;
     _hover?: HeroBannerButtonState;
     _selected?: HeroBannerButtonState;
+  };
+  search?: {
+    border_width?: Array<string | undefined>;
   };
 }

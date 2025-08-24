@@ -1,11 +1,10 @@
-import { Flex, Icon } from '@chakra-ui/react';
-import React from 'react';
+import { Flex, Icon } from "@chakra-ui/react";
+import React from "react";
 
-import config from 'configs/app';
-// eslint-disable-next-line no-restricted-imports
-import celeniumIcon from 'icons/brands/celenium.svg';
-import hexToBase64 from 'lib/hexToBase64';
-import { Link } from 'toolkit/chakra/link';
+import config from "configs/app";
+import IconSvg from "ui/shared/IconSvg";
+import hexToBase64 from "lib/hexToBase64";
+import { Link } from "toolkit/chakra/link";
 
 const feature = config.features.rollup;
 
@@ -24,9 +23,9 @@ function getCeleniumUrl(props: Props) {
 
     const url = new URL(feature.DA.celestia.celeniumUrl);
 
-    url.searchParams.set('commitment', hexToBase64(props.commitment));
-    url.searchParams.set('hash', hexToBase64(props.namespace));
-    url.searchParams.set('height', String(props.height));
+    url.searchParams.set("commitment", hexToBase64(props.commitment));
+    url.searchParams.set("hash", hexToBase64(props.namespace));
+    url.searchParams.set("height", String(props.height));
 
     return url.toString();
   } catch (error) {}
@@ -40,9 +39,11 @@ const CeleniumLink = (props: Props) => {
   }
 
   return (
-    <Flex alignItems="center" columnGap={ 2 }>
-      <Icon as={ celeniumIcon } boxSize={ 5 }/>
-      <Link external href={ getCeleniumUrl(props) }>Blob page</Link>
+    <Flex alignItems="center" columnGap={2}>
+      <IconSvg name="brands/celenium" boxSize={5} />
+      <Link external href={getCeleniumUrl(props)}>
+        Blob page
+      </Link>
     </Flex>
   );
 };

@@ -2,9 +2,8 @@ version: '3.9'
 
 services:
   frontend:
-    build:
-      context: ../../../frontend # <--- Path to your cloned frontend repo relative to this frontend.yml
-      dockerfile: Dockerfile
+    image: ghcr.io/blockscout/frontend:${FRONTEND_DOCKER_TAG:-latest}
+    pull_policy: always
     platform: linux/amd64
     restart: always
     container_name: 'frontend'

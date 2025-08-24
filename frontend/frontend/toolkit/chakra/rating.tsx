@@ -1,10 +1,10 @@
-import { Icon, RatingGroup, useRatingGroup } from '@chakra-ui/react';
-import * as React from 'react';
+import { Icon, RatingGroup, useRatingGroup } from "@chakra-ui/react";
+import * as React from "react";
 
-import StarFilledIcon from 'icons/star_filled.svg';
-import StarOutlineIcon from 'icons/star_outline.svg';
+import IconSvg from "ui/shared/IconSvg";
 
-export interface RatingProps extends Omit<RatingGroup.RootProviderProps, 'value'> {
+export interface RatingProps
+  extends Omit<RatingGroup.RootProviderProps, "value"> {
   count?: number;
   label?: string | Array<string>;
   defaultValue?: number;
@@ -14,30 +14,51 @@ export interface RatingProps extends Omit<RatingGroup.RootProviderProps, 'value'
 
 export const Rating = React.forwardRef<HTMLDivElement, RatingProps>(
   function Rating(props, ref) {
-    const { count = 5, label: labelProp, defaultValue, onValueChange, readOnly, ...rest } = props;
-    const store = useRatingGroup({ count, defaultValue, onValueChange, readOnly });
+    const {
+      count = 5,
+      label: labelProp,
+      defaultValue,
+      onValueChange,
+      readOnly,
+      ...rest
+    } = props;
+    const store = useRatingGroup({
+      count,
+      defaultValue,
+      onValueChange,
+      readOnly,
+    });
 
-    const highlightedIndex = store.hovering && !readOnly ? store.hoveredValue : store.value;
-    const label = Array.isArray(labelProp) ? labelProp[highlightedIndex - 1] : labelProp;
+    const highlightedIndex =
+      store.hovering && !readOnly ? store.hoveredValue : store.value;
+    const label = Array.isArray(labelProp)
+      ? labelProp[highlightedIndex - 1]
+      : labelProp;
 
     return (
-      <RatingGroup.RootProvider ref={ ref } value={ store } { ...rest }>
-        <RatingGroup.HiddenInput/>
+      <RatingGroup.RootProvider ref={ref} value={store} {...rest}>
+        <RatingGroup.HiddenInput />
         <RatingGroup.Control>
-          { Array.from({ length: count }).map((_, index) => {
-            const icon = index < highlightedIndex ?
-              <Icon boxSize={ 5 }><StarFilledIcon/></Icon> :
-              <Icon boxSize={ 5 }><StarOutlineIcon/></Icon>;
+          {Array.from({ length: count }).map((_, index) => {
+            const icon =
+              index < highlightedIndex ? (
+                <IconSvg name="star_filled" boxSize={5} />
+              ) : (
+                <IconSvg name="star_outline" boxSize={5} />
+              );
 
             return (
-              <RatingGroup.Item key={ index } index={ index + 1 }>
-                <RatingGroup.ItemIndicator icon={ icon }/>
+              <RatingGroup.Item key={index} index={index + 1}>
+                <RatingGroup.ItemIndicator
+                  icon={icon}
+                  cursor={readOnly ? "default" : "pointer"}
+                />
               </RatingGroup.Item>
             );
-          }) }
+          })}
         </RatingGroup.Control>
-        { label && <RatingGroup.Label>{ label }</RatingGroup.Label> }
+        {label && <RatingGroup.Label>{label}</RatingGroup.Label>}
       </RatingGroup.RootProvider>
     );
-  },
+  }
 );

@@ -1,10 +1,7 @@
 import { Box, Text, Icon } from '@chakra-ui/react';
 import React from 'react';
 
-// This icon doesn't work properly when it is in the sprite
-// Probably because of the gradient
-// eslint-disable-next-line no-restricted-imports
-import solidityScanIcon from 'icons/brands/solidity_scan.svg';
+import IconSvg from 'ui/shared/IconSvg';
 import useFetchReport from 'lib/solidityScan/useFetchReport';
 import { Link } from 'toolkit/chakra/link';
 import { PopoverBody, PopoverContent, PopoverRoot } from 'toolkit/chakra/popover';
@@ -44,7 +41,7 @@ const SolidityscanReport = ({ hash }: Props) => {
         <PopoverBody textStyle="sm">
           <Box mb={ 5 } lineHeight="25px">
             Contract analyzed for 240+ vulnerability patterns by
-            <Icon as={ solidityScanIcon } mr={ 1 } ml="6px" w="23px" h="20px" display="inline-block" verticalAlign="middle"/>
+            <IconSvg name="brands/solidity_scan" mr={ 1 } ml="6px" w="23px" h="20px" display="inline-block" verticalAlign="middle"/>
             <Text fontWeight={ 600 } display="inline-block">SolidityScan</Text>
           </Box>
           <SolidityscanReportScore score={ score } mb={ 5 }/>

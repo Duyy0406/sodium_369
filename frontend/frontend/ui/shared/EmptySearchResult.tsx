@@ -1,10 +1,7 @@
 import { Box, Icon } from '@chakra-ui/react';
 import React from 'react';
 
-// This icon doesn't work properly when it is in the sprite
-// Probably because of radial gradient
-// eslint-disable-next-line no-restricted-imports
-import emptySearchResultIcon from 'icons/empty_search_result.svg';
+import IconSvg from 'ui/shared/IconSvg';
 import { Heading } from 'toolkit/chakra/heading';
 
 interface Props {
@@ -20,8 +17,8 @@ const EmptySearchResult = ({ text }: Props) => {
       justifyContent="center"
       mt="50px"
     >
-      <Icon
-        as={ emptySearchResultIcon }
+      <IconSvg
+        name="empty_search_result"
         w={{ base: '160px', sm: '240px' }}
         h="auto"
         mb={{ base: 4, sm: 6 }}

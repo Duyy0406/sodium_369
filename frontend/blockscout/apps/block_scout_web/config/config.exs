@@ -48,15 +48,6 @@ config :block_scout_web, BlockScoutWeb.Chain.TransactionHistoryChartController,
   # days
   history_size: 30
 
-# GPU Supply Dashboard configuration
-config :block_scout_web, :gpu_dashboard,
-  enabled: true,
-  contract_address: "0x4bF8D2E79E33cfd5a8348737CA91bE5F65Ea7dd9",
-  # Optional: You can specify an RPC endpoint here if different from the main explorer one
-  # rpc_endpoint: "http://localhost:8545",
-  refresh_interval_ms: 10_000, # 10 seconds
-  max_retries: 5
-
 config :ex_cldr,
   default_locale: "en",
   default_backend: BlockScoutWeb.Cldr
