@@ -1,5 +1,5 @@
 # GPU Agent
-
+source venv/bin/activate
 ## Overview
 The GPU Agent is a simple Python application that retrieves basic GPU information from a machine using the `nvidia-smi` command and sends this data to a specified API endpoint. This project is designed to run on machines with NVIDIA GPUs.
 

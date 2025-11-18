@@ -1,18 +1,22 @@
-import "@nomicfoundation/hardhat-toolbox";
+// hardhat.config.js (ESM)
 import dotenv from "dotenv";
+import "@nomicfoundation/hardhat-toolbox";
 
 dotenv.config();
 
-const KURTOSIS_RPC_URL = process.env.KURTOSIS_RPC_URL || "http://127.0.0.1:50740";
-const KURTOSIS_PRIVATE_KEY = process.env.KURTOSIS_PRIVATE_KEY;
-const SEPOLIA_PRIVATE_KEY = process.env.SEPOLIA_PRIVATE_KEY;
+const {
+  KURTOSIS_RPC_URL = "http://127.0.0.1:32789",
+  KURTOSIS_PRIVATE_KEY,
+  SEPOLIA_PRIVATE_KEY,
+  SEPOLIA_RPC_URL = "",
+} = process.env;
 
 /** @type import('hardhat/config').HardhatUserConfig */
 const config = {
   solidity: "0.8.28",
   networks: {
     sepolia: {
-      url: process.env.SEPOLIA_RPC_URL || "", // Make sure to set SEPOLIA_RPC_URL in your .env
+      url: SEPOLIA_RPC_URL,
       accounts: SEPOLIA_PRIVATE_KEY ? [SEPOLIA_PRIVATE_KEY] : [],
     },
     kurtosis: {
@@ -20,20 +24,19 @@ const config = {
       accounts: KURTOSIS_PRIVATE_KEY ? [KURTOSIS_PRIVATE_KEY] : [],
     },
   },
-
   etherscan: {
-    apiKey: {
-      'mykurtosistestnet': 'empty'
-    },
+    apiKey: { mykurtosistestnet: "empty" },
     customChains: [
       {
         network: "mykurtosistestnet",
         chainId: 3151908,
         urls: {
           apiURL: "http://localhost/api",
-          browserURL: "http://localhost"
-        }
-      }
-    ]
-  }
+          browserURL: "http://localhost",
+        },
+      },
+    ],
+  },
 };
+
+export default config;

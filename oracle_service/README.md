@@ -3,7 +3,9 @@
 Automatically updates the smart contract with GPU supply data from the agent every 5 minutes.
 
 ## Setup
+python3 -m venv venv
 
+source venv/bin/activate
 1. Install dependencies:
    ```bash
    pip install -r requirements.txt
